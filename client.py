@@ -106,6 +106,8 @@ class game:
         self.status = self.client.receive_json() # excpect {"players" : {player1 : {coords: [x, y], ...}, player2 : {...}}}
         assert isinstance(self.status, dict)
         assert self.status
+        self.player_info = self.status["players"][self.player_name]
+        logger.debug(f"During autorization recived player name {self.player_name} and status {self.status}")
 
 
     def game_loop(self):
@@ -160,7 +162,7 @@ class game:
 
 
     def update_status(self):
-        self.status = self.client.recive_json()
+        self.status = self.client.receive_json()
         self.player_info = self.status["players"][self.player_name]
 
 
@@ -177,7 +179,7 @@ def main(SERVER_IP, SERVER_PORT):
 
 
 if __name__ == "__main__":
-    SERVER_IP = "127.0.0.2"
+    SERVER_IP = "127.0.0.1"
     SERVER_PORT = 65432
 
     main(SERVER_IP, SERVER_PORT)
