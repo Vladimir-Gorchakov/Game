@@ -69,7 +69,7 @@ class game:
         self.MOVE_SPEED = 10
         self.WINDOW_WIDTH = 1200
         self.WINDOW_HEIGHT = 800
-        self.PLAYER_COLOR = (0, 0, 255)
+        self.PLAYER_COLOR = None # example: (0, 0, 255)
         
         # get server socket from client class
         self.client = client(SERVER_IP, SERVER_PORT)
@@ -131,7 +131,8 @@ class game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if event.type == pygame.KEYDOWN: # If button is presed check what are pressed
+            # If button is presed check what are pressed
+            if event.type == pygame.KEYDOWN: 
                 match event.key:
                     case pygame.K_w:
                         self.player_info["coords"][1] += 10
@@ -161,13 +162,6 @@ class game:
     def update_status(self):
         self.status = self.client.recive_json()
         self.player_info = self.status["players"][self.player_name]
-
-    
-    def send_status(self):
-        self.player_info
-
-
-
 
 
 def main(SERVER_IP, SERVER_PORT):
