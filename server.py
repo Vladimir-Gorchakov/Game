@@ -92,13 +92,11 @@ class Server:
         conn.setblocking(False)
         data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
         self.sel.register(conn, selectors.EVENT_READ | selectors.EVENT_WRITE, data=data)
-        # Make nickname for new user
         self.connected_users[conn.getpeername()] = next(self.nickname_gen)  # Dictionary like: client_socket -> nickname
 
     def handle_client(self, key: selectors.SelectorKey, mask: int):
         sock: socket = key.fileobj
         data: types.SimpleNamespace = key.data
-        # Accept client data
         if mask & selectors.EVENT_READ:  # Client sent data
             recv_data = sock.recv(4096)
             if recv_data:
@@ -108,7 +106,6 @@ class Server:
                 logger.info(f"Closing connection to {data.addr}")
                 self.sel.unregister(sock)
                 sock.close()
-        # Send response
         if mask & selectors.EVENT_WRITE and data.outb:  # If the server has a response
             logger.info(f"Sending {data.outb} to {data.addr}")
             sent = sock.send(data.outb)
@@ -123,12 +120,12 @@ class Server:
                 data.outb = nickname.encode("utf-8")  # Returns nickname for player
                 return
             case "get_status":
-                self.statuses.setInitialStatus(nickname)  # spawn initial player
+                self.statuses.setInitialStatus(nickname)
                 data.outb = self.encode_dict(self.statuses.getStatuses())  # Returns all players statuses
                 return
             case _:
                 data_dict = json.loads(data_str)  # Must be like {"coords": [x,y], ...}
-                self.statuses.update_status(nickname=nickname, player_info=data_dict)  # update status
+                self.statuses.update_status(nickname=nickname, player_info=data_dict)
                 data.outb = self.encode_dict(self.statuses.getStatuses())  # Returns all players statuses
 
     def nickname_generator(self):
