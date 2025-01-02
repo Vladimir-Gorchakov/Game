@@ -15,7 +15,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-
 class client:
     def __init__(self, SERVER_IP: str, SERVER_PORT: int):
         self.server_socket = self.connect_to_server(SERVER_IP, SERVER_PORT)
@@ -69,7 +68,7 @@ class game:
         self.MOVE_SPEED = 10
         self.WINDOW_WIDTH = 1200
         self.WINDOW_HEIGHT = 800
-        self.PLAYER_COLOR = None # example: (0, 0, 255)
+        self.PLAYER_COLOR = None  # example: (0, 0, 255)
         
         # get server socket from client class
         self.client = client(SERVER_IP, SERVER_PORT)
@@ -82,10 +81,9 @@ class game:
         self.running = True
 
         # player info
-        self.player_name = None # player1 or player2
-        self.status = None # {"players" : {player1 : {coords: [x, y], ...}, player2 : {...}}}
-        self.player_info = None # {coords: [x, y], ...} or self.status["players"][self.player_name]
-
+        self.player_name = None  # player1 or player2
+        self.status = None  # {"players" : {player1 : {coords: [x, y], ...}, player2 : {...}}}
+        self.player_info = None  # {coords: [x, y], ...} or self.status["players"][self.player_name]
 
     def start_game(self):
         # autorization
@@ -94,11 +92,10 @@ class game:
         # starting game
         self.game_loop()
         
-
     def autorization(self):
         # get player name
         self.server_socket.sendall("get_player_name".encode("utf-8"))
-        self.player_name = self.server_socket.recv(1024).decode("utf-8") # excpect to get player1 or player2
+        self.player_name = self.server_socket.recv(1024).decode("utf-8")  # excpect to get player1 or player2
         assert "player" in self.player_name, f"Player name is wrong, got {self.player_name}"
 
         # get current status of the game
@@ -125,7 +122,6 @@ class game:
             # Limit the FPS by sleeping for the remainder of the frame time
             self.clock.tick(self.FPS)
 
-
     def parse_events_and_do_actions(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -143,21 +139,21 @@ class game:
                     case pygame.K_a:
                         self.player_info["coords"][0] -= 10
                     case _:
-                        pass         
-
+                        pass
 
     def render_data(self):
         self.window.fill((0, 0, 0))
 
         players_info = self.status["players"]
         for player_name in players_info.keys():
-            pygame.draw.circle(surface = self.window, 
-                            color=(0, 0, 255),
-                            center=players_info[player_name]["coords"],
-                            radius=20)
-        
-        pygame.display.flip()
+            pygame.draw.circle(
+                surface=self.window,
+                color=(0, 0, 255),
+                center=players_info[player_name]["coords"],
+                radius=20,
+                )
 
+        pygame.display.flip()
 
     def update_status(self):
         self.status = self.client.receive_json()
@@ -173,7 +169,6 @@ def main(SERVER_IP, SERVER_PORT):
         raise e
     finally:
         GAME.client.close()
-
 
 
 if __name__ == "__main__":
