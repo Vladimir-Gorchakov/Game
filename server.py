@@ -3,6 +3,7 @@ import socket
 import types
 import json
 import logging
+import argparse
 
 # Configure logging
 logging.basicConfig(
@@ -141,10 +142,16 @@ class Server:
         return json.loads(data.decode("utf-8"))
 
 
-def main():
-    server = Server(server_ip="127.0.0.1", server_port=65432)
+def main(args):
+    server = Server(server_ip=args.ip, server_port=args.port)
     server.get_connections()
 
 
+
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ip", type=str)
+    parser.add_argument("--port", type=int)
+    args = parser.parse_args()
+    
+    main(args)

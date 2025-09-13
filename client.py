@@ -5,6 +5,7 @@ from pathlib import Path
 
 import logging
 import traceback
+import argparse
 
 # Configure logging
 logging.basicConfig(
@@ -260,9 +261,9 @@ class player:
             self.pos[1] += self.speed * normal_direction[1]
 
 
-def main(SERVER_IP, SERVER_PORT):
+def main(args):
     try:
-        GAME = game(SERVER_IP, SERVER_PORT)
+        GAME = game(args.ip, args.port)
         GAME.start_game()
     except Exception as e:
         GAME.client.close()
@@ -272,7 +273,9 @@ def main(SERVER_IP, SERVER_PORT):
 
 
 if __name__ == "__main__":
-    SERVER_IP = "127.0.0.1"  # "212.193.5.252"
-    SERVER_PORT = 65432
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ip", type=str)
+    parser.add_argument("--port", type=int)
+    args = parser.parse_args()
 
-    main(SERVER_IP, SERVER_PORT)
+    main(args)
